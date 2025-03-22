@@ -1,6 +1,7 @@
 pub mod math;
 
 use std::env::args;
+use std::time::SystemTime;
 use std::{
     ffi::{c_void, CStr},
     process::exit,
@@ -55,3 +56,62 @@ pub extern "C" fn main() {
     }
 }
 
+#[no_mangle]
+pub extern "C" fn fail_assertion(msg: *const i8) {
+    let msg = to_str(msg);
+
+    println!("[abort] {}", msg);
+    exit(1);
+}
+
+#[no_mangle]
+pub extern "C" fn jpl_alloc(size: u64) -> *mut c_void {
+    if size <= 0 {
+        fail!(
+            "jpl_alloc",
+            "Could not allocate 0 or negative amount of memory",
+        );
+    } else {
+        // TODO: not sure if i could implement a jpl_free with this current version
+        let mem = vec![0u8; size as usize].into_boxed_slice();
+        Box::into_raw(mem) as *mut c_void
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn get_time() -> f64 {
+    SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap_or_else(|_| fail!("get_time", "could not measure time"))
+        .as_secs_f64()
+}
+
+#[no_mangle]
+pub extern "C" fn print_time(time: f64) {
+    println!("[time] {:.6}ms", time * 1000.0)
+}
+
+#[no_mangle]
+pub extern "C" fn print(msg: *const i8) {
+    let msg = to_str(msg);
+
+    println!("{}", msg);
+}
+
+#[no_mangle]
+pub extern "C" fn to_int(n: f64) -> i64 {
+    if n.is_nan() {
+        0
+    } else if n == f64::INFINITY {
+        i64::MAX
+    } else if n == f64::NEG_INFINITY {
+        i64::MIN
+    } else {
+        n as i64
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn to_double(n: u64) -> f64 {
+    n as f64
+}
