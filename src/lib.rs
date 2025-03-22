@@ -1,5 +1,6 @@
 pub mod math;
 pub mod png;
+pub mod show;
 
 use std::env::args;
 use std::time::SystemTime;
