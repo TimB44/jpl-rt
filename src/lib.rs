@@ -1,3 +1,4 @@
+pub mod math;
 
 use std::env::args;
 use std::{
