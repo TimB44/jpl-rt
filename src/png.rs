@@ -51,6 +51,11 @@ pub extern "C" fn read_image(filename: *const i8) -> Img {
 }
 
 #[no_mangle]
+pub extern "C" fn _read_image(filename: *const i8) -> Img {
+    read_image(filename)
+}
+
+#[no_mangle]
 pub extern "C" fn write_image(img: Img, filename: *const i8) {
     let filename = unsafe { CStr::from_ptr(filename) }
         .to_str()
@@ -73,4 +78,9 @@ pub extern "C" fn write_image(img: Img, filename: *const i8) {
     buffer
         .save(filename)
         .unwrap_or_else(|err| fail!("write_image", "could not open image: {}", err))
+}
+
+#[no_mangle]
+pub extern "C" fn _write_image(img: Img, filename: *const i8) {
+    write_image(img, filename)
 }

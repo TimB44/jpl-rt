@@ -59,11 +59,21 @@ pub extern "C" fn main() {
 }
 
 #[no_mangle]
+pub extern "C" fn _main() {
+    main()
+}
+
+#[no_mangle]
 pub extern "C" fn fail_assertion(msg: *const i8) {
     let msg = to_str(msg);
 
     println!("[abort] {}", msg);
     exit(1);
+}
+
+#[no_mangle]
+pub extern "C" fn _fail_assertion(msg: *const i8) {
+    fail_assertion(msg)
 }
 
 #[no_mangle]
@@ -81,6 +91,11 @@ pub extern "C" fn jpl_alloc(size: u64) -> *mut c_void {
 }
 
 #[no_mangle]
+pub extern "C" fn _jpl_alloc(size: u64) -> *mut c_void {
+    jpl_alloc(size)
+}
+
+#[no_mangle]
 pub extern "C" fn get_time() -> f64 {
     SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -89,8 +104,18 @@ pub extern "C" fn get_time() -> f64 {
 }
 
 #[no_mangle]
+pub extern "C" fn _get_time() -> f64 {
+    get_time()
+}
+
+#[no_mangle]
 pub extern "C" fn print_time(time: f64) {
     println!("[time] {:.6}ms", time * 1000.0)
+}
+
+#[no_mangle]
+pub extern "C" fn _print_time(time: f64) {
+    print_time(time)
 }
 
 #[no_mangle]
@@ -98,6 +123,11 @@ pub extern "C" fn print(msg: *const i8) {
     let msg = to_str(msg);
 
     println!("{}", msg);
+}
+
+#[no_mangle]
+pub extern "C" fn _print(msg: *const i8) {
+    print(msg)
 }
 
 #[no_mangle]
@@ -114,6 +144,16 @@ pub extern "C" fn to_int(n: f64) -> i64 {
 }
 
 #[no_mangle]
+pub extern "C" fn _to_int(n: f64) -> i64 {
+    to_int(n)
+}
+
+#[no_mangle]
 pub extern "C" fn to_double(n: u64) -> f64 {
     n as f64
+}
+
+#[no_mangle]
+pub extern "C" fn _to_double(n: u64) -> f64 {
+    to_double(n)
 }

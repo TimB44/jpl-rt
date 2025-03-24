@@ -17,6 +17,11 @@ pub extern "C" fn show(type_str: *const i8, data: *const c_void) {
     println!("{}", data_str);
 }
 
+#[no_mangle]
+pub extern "C" fn _show(type_str: *const i8, data: *const c_void) {
+    show(type_str, data)
+}
+
 struct TypeStr<'a> {
     src: &'a [u8],
     cur: usize,
